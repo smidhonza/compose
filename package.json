@@ -1,0 +1,31 @@
+{
+  "name": "@smidhonza/compose",
+  "version": "1.0.0",
+  "private": false,
+  "description": "A tiny TypeScript `compose` helper for combining functions from right to left.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smidhonza/compose.git"
+  },
+  "author": "Honza Smid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smidhonza/compose/issues"
+  },
+  "homepage": "https://github.com/smidhonza/compose#readme",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
+  }
+}
