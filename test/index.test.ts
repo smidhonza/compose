@@ -3,16 +3,20 @@ import { compose } from '../src';
 describe('compose', () => {
     it('returns an identity function when given no functions', () => {
         const source = { id: 8 };
+        const promise = Promise.resolve(source);
         const identity = compose();
 
         expect(identity(source)).toBe(source);
+        expect(identity(promise)).toBe(promise);
     });
 
     it('passes a value through functions from right to left', () => {
         const add5 = (value: number) => value + 5;
         const double = (value: number) => value * 2;
 
-        expect(compose(add5, double)(10)).toEqual(25);
+        const result: number = compose(add5, double)(10);
+
+        expect(result).toEqual(25);
     });
 
     it('returns composed result', () => {
@@ -35,9 +39,7 @@ describe('compose', () => {
         expect(compose(add15, add5)(5)).toEqual(25);
     });
 
-    it('returns fetched async data', async () => {
-        const Future = async (promise: unknown) => await Promise.resolve(promise);
-
+    it('awaits an async step before passing its value to the next function', async () => {
         const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
 
         const fetchExample = async (_url: string) => {
@@ -45,8 +47,31 @@ describe('compose', () => {
             return { id: 8 };
         };
 
-        const fetch = compose(Future, fetchExample);
+        const getId = compose((value: { id: number }) => value.id, fetchExample);
+        const result = await getId('url-to-fetch');
 
-        expect(await fetch('url-to-fetch')).toEqual({ id: 8 });
+        expect(result).toEqual(8);
+    });
+
+    it('supports an async step between synchronous steps', async () => {
+        const calculation = compose(
+            (value: number) => value * 2,
+            async (value: number) => value + 1,
+            (value: string) => Number(value),
+        );
+        const result = await calculation('4');
+
+        expect(result).toBe(10);
+    });
+
+    it('keeps a synchronous result when a conditional step does not return a promise', async () => {
+        const maybeAsync = (value: number): number | Promise<number> =>
+            value > 0 ? Promise.resolve(value + 1) : value + 1;
+        const calculation = compose((value: number) => value * 2, maybeAsync);
+        const syncResult = calculation(-1);
+        const asyncResult = await calculation(1);
+
+        expect(syncResult).toBe(0);
+        expect(asyncResult).toBe(4);
     });
 });
