@@ -1,6 +1,6 @@
 {
   "name": "@smidhonza/compose",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "description": "A tiny TypeScript `compose` helper for combining functions from right to left.",
   "main": "./dist/index.js",
